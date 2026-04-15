@@ -1,126 +1,82 @@
+
 # CloudShield: AWS WAF SQLi Mitigation & Infrastructure Hardening
 
 ## 📌 Project Overview
-This project demonstrates the identifica# CloudShield: AWS WAF SQLi Mitigation & Infrastructure Hardening
-
-## 📌 Project Overview
-This project demonstrates the identification and mitigation of **SQL Injection (SQLi)** vulnerabilities within a serverless AWS infrastructure. By deploying **AWS WAF (Web Application Firewall)**, I successfully secured an API Gateway and backend Lambda functions, preventing unauthorized data extraction and hardening the cloud environment against OWASP Top 10 threats.
+This project demonstrates the end-to-end identification and mitigation of **SQL Injection (SQLi)** vulnerabilities within a serverless AWS infrastructure. By architecting a **Defense-in-Depth** strategy using **AWS WAF (Web Application Firewall)**, I successfully secured an API Gateway and backend Lambda functions, neutralizing OWASP Top 10 threats and preventing unauthorized data exfiltration.
 
 ---
 
 ## 🏗️ 1. Infrastructure Architecture
-Visualizing the security layers and request flow within the AWS Cloud.
+Visualizing the security layers and request flow within the AWS Cloud environment.
 
 ![Network Topology](network_topology.png)
-**Technical Detail:** This topology illustrates the "Defense-in-Depth" strategy. The AWS WAF is positioned at the edge to inspect all incoming traffic before it reaches the API Gateway and processing layers.
+
+> **Technical Detail:** This topology illustrates the secure request lifecycle. The AWS WAF is positioned at the edge as the primary inspector, validating all incoming traffic before it reaches the API Gateway and downstream compute layers (AWS Lambda).
 
 ---
 
 ## 🔓 2. Vulnerability Assessment (Pre-Mitigation)
-Demonstrating the security gap in an unprotected API.
+Demonstrating the critical security gap in an unprotected REST API.
 
 ![Vulnerability Proof](vulnerability_proof.png)
-**Technical Detail:** Without security rules, the system was susceptible to a basic SQLi payload (`' OR '1'='1`). The screenshot proves that sensitive database information (`User_ID_101, Balance: $5000`) was leaked in the API response.
+
+> **Technical Detail:** Before implementing security controls, the system was vulnerable to a standard SQLi payload (`' OR '1'='1`). This Proof-of-Concept (PoC) shows the API leaking sensitive database information, including `User_ID_101` and `Balance: $5000`.
 
 ---
 
 ## ⚙️ 3. Security Implementation (WAF Configuration)
-Enforcing strict traffic filtering and rule customization.
+Enforcing granular traffic filtering and customized managed rule sets.
 
 ![WAF Config Rules](waf_config_rules.png)
-**Technical Detail:** I implemented the **AWSManagedRulesSQLiRuleSet** and configured the action to **"Block"**. I ensured granular inspection across Query Arguments, Body, and Cookies to prevent bypass attempts.
+
+> **Technical Detail:** I deployed the **AWSManagedRulesSQLiRuleSet** and configured the action to **"Block"**. To ensure comprehensive coverage, I enabled deep packet inspection across Query Arguments, HTTP Body, and Cookies, effectively closing common bypass vectors.
 
 ---
 
 ## ✅ 4. Attack Mitigation Validation (The Result)
-Verifying that the security implementation successfully blocks the threat.
+Verifying the efficacy of the implemented security controls through active testing.
 
-![Attack Blocked](Attack%20Blocked%20(Success).png)
-**Technical Detail:** Re-testing the same SQLi attack vector now results in an **HTTP 403 Forbidden** status. This confirms that the WAF is successfully intercepting and terminating malicious requests.
+> **Technical Detail:** Post-hardening validation shows that the same attack vector is now successfully intercepted. The WAF terminates the malicious session at the edge, returning a definitive **HTTP 403 Forbidden** status.
 
 ---
 
 ## 📝 5. Terminal Execution Logs (PoC)
-Deep dive into the terminal output during the attack simulation.
+Verbose terminal analysis capturing the handshake and mitigation response.
 
 ![Final Output Log](Final.output22)
-**Technical Detail:** This log captures the raw `curl` verbose output. It shows the complete TLS handshake and the final `{"message":"Forbidden"}` JSON response, proving the server-side rejection of the payload.
+
+> **Technical Detail:** This execution log captures the raw `curl` verbose output. It verifies the complete **TLS 1.3 handshake** and confirms the server-side rejection with a `{"message":"Forbidden"}` JSON response, providing low-level proof of the mitigation success.
 
 ---
 
 ## 📊 6. Real-Time Observability & Monitoring
-Analyzing attack telemetry through CloudWatch metrics.
+Leveraging cloud-native analytics for threat intelligence and traffic monitoring.
 
 ![Traffic Monitoring](traffic_monitoring_graph.png)
-**Technical Detail:** The monitoring dashboard displays real-time spikes in blocked traffic. The logs specifically tag the **SQLiRuleSet** as the terminating rule, providing full visibility into the attack attempt.
+
+> **Technical Detail:** The CloudWatch dashboard provides real-time visibility into attack telemetry. The visible spikes represent blocked requests, with automated logging tagging the **SQLiRuleSet** as the specific trigger for termination.
 
 ---
 
-## 🛠️ Tech Stack & Methodology
-* **Cloud Platform:** Amazon Web Services (WAF, API Gateway, Lambda, CloudWatch)
-* **Security Testing:** Kali Linux (Penetration Testing), cURL
-* **Security Standards:** OWASP Top 10 Mitigation
-* **Logic:** Serverless Security Architecture
+## 🛠️ Technical Stack & Tooling
+A comprehensive list of industry-standard technologies utilized in this project:
+
+* **Cloud Infrastructure (AWS):**
+    * **AWS WAF:** Edge security for request filtering and threat mitigation.
+    * **Amazon API Gateway:** Managed entry point for serverless logic.
+    * **AWS Lambda:** Serverless compute for backend API processing.
+    * **Amazon CloudWatch:** Real-time observability, logging, and metrics.
+* **Security & Penetration Testing:**
+    * **Kali Linux:** Primary environment for vulnerability assessment and attack simulation.
+    * **cURL:** Command-line utility for crafting and sending malicious test payloads.
+* **Protocols & Standards:**
+    * **OWASP Top 10:** Framework used to address high-priority web vulnerabilities.
+    * **TLS 1.3 & HTTP/2:** Advanced protocols enforced for secure data transit.
+    * **Zero-Trust Logic:** Ensuring every request is inspected and validated before processing.
 
 ---
 
-### 🚀 How to Set Up this Repository:
-1. **Upload Files:** Upload all screenshots and the log file (`Final.output22`) to the main folder of your repository.
-2. **Update README:** Click on the edit icon in your `README.md` and paste this updated code.
-3. **Commit:** Save the changes.tion and mitigation of **SQL Injection (SQLi)** vulnerabilities within a serverless AWS infrastructure. By deploying **AWS WAF (Web Application Firewall)**, I successfully secured an API Gateway and backend Lambda functions, preventing unauthorized data extraction and hardening the cloud environment against OWASP Top 10 threats.
-
----
-
-## 🏗️ 1. Infrastructure Architecture
-Visualizing the security layers and request flow within the AWS Cloud.
-
-![Network Topology](network_topology.png)
-**Technical Detail:** This topology illustrates the "Defense-in-Depth" strategy. The AWS WAF is positioned at the edge to inspect all incoming traffic before it reaches the API Gateway and processing layers.
-
----
-
-## 🔓 2. Vulnerability Assessment (Pre-Mitigation)
-Demonstrating the security gap in an unprotected API.
-
-![Vulnerability Proof](vulnerability_proof.png)
-**Technical Detail:** Without security rules, the system was susceptible to a basic SQLi payload (`' OR '1'='1`). The screenshot proves that sensitive database information (`User_ID_101, Balance: $5000`) was leaked in the API response.
-
----
-
-## ⚙️ 3. Security Implementation (WAF Configuration)
-Enforcing strict traffic filtering and rule customization.
-
-![WAF Config Rules](waf_config_rules.png)
-**Technical Detail:** I implemented the **AWSManagedRulesSQLiRuleSet** and configured the action to **"Block"**. I ensured granular inspection across Query Arguments, Body, and Cookies to prevent bypass attempts.
-
----
-
-## ✅ 4. Attack Mitigation Validation (The Result)
-Verifying that the security implementation successfully blocks the threat.
-
-![Attack Blocked](Attack%20Blocked%20(Success).png)
-**Technical Detail:** Re-testing the same SQLi attack vector now results in an **HTTP 403 Forbidden** status. This confirms that the WAF is successfully intercepting and terminating malicious requests.
-
----
-
-## 📊 5. Real-Time Observability & Monitoring
-Analyzing attack telemetry through CloudWatch metrics.
-
-![Traffic Monitoring](traffic_monitoring_graph.png)
-**Technical Detail:** The monitoring dashboard displays real-time spikes in blocked traffic. The logs specifically tag the **SQLiRuleSet** as the terminating rule, providing full visibility into the attack attempt.
-
----
-
-## 🛠️ Tech Stack & Methodology
-* **Cloud Platform:** Amazon Web Services (WAF, API Gateway, Lambda, CloudWatch)
-* **Security Testing:** Kali Linux (Penetration Testing), cURL
-* **Security Standards:** OWASP Top 10 Mitigation
-* **Logic:** Serverless Security Architecture
-
----
-
-### 🚀 How to Set Up this Repository:
-1. **Upload Images:** Upload all 5 screenshots (`network_topology.png`, `vulnerability_proof.png`, `waf_config_rules.png`, `Attack Blocked (Success).png`, `traffic_monitoring_graph.png`) to the main folder of your repository.
-2. **Create File:** Click on **Add file** -> **Create new file**.
-3. **Name it:** Name the file exactly `README.md`.
-4. **Paste & Save:** Paste the code above and click **Commit changes**.
+### 🚀 Deployment Instructions:
+1.  **Repository Setup:** Upload all 5 screenshots and the log file (`Final.output22`) to the root directory of your GitHub repository.
+2.  **README Update:** Open the `README.md` editor and paste the Markdown code above.
+3.  **Verification:** Ensure that file names in the repository exactly match the links in the Markdown code (e.g., `network_topology.png`) for the images to render correctly.
